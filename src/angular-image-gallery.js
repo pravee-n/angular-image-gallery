@@ -5,32 +5,34 @@ angular.module('image-gallery', [])
         restrict: 'A',
         replace: true,
         scope: {
-            imgData: '=',
+            imgInfo: '=',
             galleryIndex: '@'
         },
         template:
             '<section class="img-gal-sc" data-ng-keyup="keyNav($event)" tabindex="0">' +
                 '<div class="img-box">' +
-                    '<img data-ng-src="{{imgData[galleryIndex].i}}" data-ng-hide="loadingImage">' +
+                    '<img data-ng-src="{{imgInfo[galleryIndex].i}}" data-ng-hide="loadingImage">' +
                     '<div class="loader-box" data-ng-show="loadingImage">' +
                         'Loading' +
                     '</div>' +
                 '</div>' +
                 '<div class="title-box">' +
-                    '<p class="img-title" data-ng-bind="imgData[galleryIndex].t"></p>' +
+                    '<p class="img-title" data-ng-bind="imgInfo[galleryIndex].t"></p>' +
                 '</div>' +
                 '<div class="gallery-close" data-ng-click="closeGallery()">' +
                     '<i class="r-icon r-icon-cross"></i>' +
                 '</div>' +
-                '<div class="gal-nav nav-l" data-ng-if="enableNav" data-ng-click="showPrev()">' +
+                '<div class="gal-nav nav-l" data-ng-if="enableKeyNav" data-ng-click="showPrevImg()">' +
                     '<i class="r-icon r-icon-carat-left2"></i>' +
                 '</div>' +
-                '<div class="gal-nav nav-r" data-ng-if="enableNav" data-ng-click="showNext()">' +
+                '<div class="gal-nav nav-r" data-ng-if="enableKeyNav" data-ng-click="showNextImg()">' +
                     '<i class="r-icon r-icon-carat-right2"></i>' +
                 '</div>' +
             '</section>',
         link: function(scope, elm, attrs) {
-            elm.focus();
+            console.log(elm)
+            elm[0].focus();
+            console.log(scope);
             if (!scope.galleryIndex) {
                 scope.galleryIndex = 0;
             }
@@ -38,7 +40,7 @@ angular.module('image-gallery', [])
             scope.$watch('galleryIndex', function(val) {
                 scope.loadingImage = true;
                 var currentImage = new Image();
-                currentImage.src = scope.imgData[scope.galleryIndex].i;
+                currentImage.src = scope.imgInfo[scope.galleryIndex].i;
                 currentImage.onload = function() {
                     $timeout(function() {
                         scope.loadingImage = false;
@@ -46,28 +48,31 @@ angular.module('image-gallery', [])
                 };
             });
 
-            if (scope.imgData && scope.imgData.length > 1) {
-                scope.enableNav = true;
+            if (scope.imgInfo && scope.imgInfo.length > 1) {
+                scope.enableKeyNav = true;
             }
             else {
-                scope.enableNav = false;
+                scope.enableKeyNav = false;
             }
 
             scope.closeGallery = function() {
                 angular.element(elm).remove();
             };
 
-            scope.showNext = function() {
-                if (scope.galleryIndex === scope.imgData.length - 1) {
+            scope.showNextImg = function() {
+                console.log('next')
+                if (scope.galleryIndex === scope.imgInfo.length - 1) {
                     scope.galleryIndex = 0;
                 } else {
                     scope.galleryIndex++;
                 }
             };
 
-            scope.showPrev = function() {
+            scope.showPrevImg = function() {
+                console.log('prev')
+
                 if (scope.galleryIndex === 0) {
-                    scope.galleryIndex = scope.imgData.length - 1;
+                    scope.galleryIndex = scope.imgInfo.length - 1;
                 } else {
                     scope.galleryIndex--;
                 }
@@ -78,12 +83,12 @@ angular.module('image-gallery', [])
                     scope.closeGallery();
                 }
 
-                if (scope.enableNav) {
+                if (scope.enableKeyNav) {
                     if (event.keyCode === 39) {
-                        scope.showNext();
+                        scope.showNextImg();
                     }
                     else if (event.keyCode === 37) {
-                        scope.showPrev();
+                        scope.showPrevImg();
                     }
                 }
             };
