@@ -30,9 +30,10 @@ angular.module('image-gallery', [])
                 '</div>' +
             '</section>',
         link: function(scope, elm, attrs) {
-            console.log(elm)
-            elm[0].focus();
-            console.log(scope);
+            $timeout(function() {
+                elm[0].focus();
+            });
+
             if (!scope.galleryIndex) {
                 scope.galleryIndex = 0;
             }
@@ -60,7 +61,6 @@ angular.module('image-gallery', [])
             };
 
             scope.showNextImg = function() {
-                console.log('next')
                 if (scope.galleryIndex === scope.imgInfo.length - 1) {
                     scope.galleryIndex = 0;
                 } else {
@@ -69,7 +69,6 @@ angular.module('image-gallery', [])
             };
 
             scope.showPrevImg = function() {
-                console.log('prev')
 
                 if (scope.galleryIndex === 0) {
                     scope.galleryIndex = scope.imgInfo.length - 1;
@@ -79,14 +78,17 @@ angular.module('image-gallery', [])
             };
 
             scope.keyNav = function(event) {
+                // Esc Key
                 if (event.keyCode === 27) {
                     scope.closeGallery();
                 }
 
                 if (scope.enableKeyNav) {
+                    // Right arrow key
                     if (event.keyCode === 39) {
                         scope.showNextImg();
                     }
+                    // left arrow key
                     else if (event.keyCode === 37) {
                         scope.showPrevImg();
                     }
